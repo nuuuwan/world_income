@@ -141,40 +141,9 @@ def build():
                 if iso not in centroid_map:
                     continue
 
-                cx, cy = centroid_map[iso]
-                name   = name_map.get(iso, iso)
-                label  = f"{name}: {prev_cls} \u2192 {cur_cls}"
 
-                # Offset text away from centroid; flip for polar countries
-                offset_y = -y_span * 0.18 if cy > ylim[0] + y_span * 0.65 else y_span * 0.18
-                text_x = max(xlim[0] + x_span * 0.02,
-                             min(xlim[1] - x_span * 0.02, cx))
-                text_y = max(ylim[0] + y_span * 0.05,
-                             min(ylim[1] - y_span * 0.05, cy + offset_y))
 
-                ax.annotate(
-                    label,
-                    xy=(cx, cy),
-                    xytext=(text_x, text_y),
-                    fontsize=6,
-                    ha="center",
-                    va="center",
-                    color="#111111",
-                    bbox=dict(
-                        boxstyle="round,pad=0.25",
-                        facecolor="white",
-                        edgecolor="#aaaaaa",
-                        alpha=0.85,
-                        linewidth=0.6,
-                    ),
-                    arrowprops=dict(
-                        arrowstyle="->",
-                        color="#444444",
-                        lw=0.9,
-                        connectionstyle="arc3,rad=0.15",
-                    ),
-                    zorder=10,
-                )
+
 
         # Reserve space for title/subtitle at top and footer at bottom;
         # keeps the map in the middle so the 16:9 canvas is fully used.
