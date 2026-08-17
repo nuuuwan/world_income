@@ -6,7 +6,8 @@ IMAGES_DIR  = "images"
 OUTPUT_DIR  = "videos"
 OUTPUT_PATH = os.path.join(OUTPUT_DIR, "world_income_history.mp4")
 
-FPS          =  1      # frames per second (each year shown for 0.5 s)
+FPS          =  1      # source cadence: 1 distinct frame per second (1 year)
+OUTPUT_FPS   = 10     # encoded frame rate (LinkedIn requires ≥ 10 fps)
 HOLD_LAST    = 4      # extra seconds to hold the final frame
 OUTPUT_WIDTH = 1920   # scale to this width; height auto-adjusted to keep ratio
 
@@ -48,16 +49,19 @@ def build():
         "ffmpeg", "-y",
         "-f", "concat", "-safe", "0",
         "-i", flist_path,
-        "-vf", f"scale={OUTPUT_WIDTH}:-2",   # -2 = round height to even number
+        "-f", "lavfi", "-i", "anullsrc=r=44100:cl=stereo",  # silent audio (LinkedIn needs audio stream)
+        "-vf", f"scale={OUTPUT_WIDTH}:-2,fps={OUTPUT_FPS}",  # upscale fps by duplicating frames
         "-c:v", "libx264",
         "-crf", "18",                         # visually lossless
         "-preset", "slow",
+        "-c:a", "aac", "-b:a", "128k",        # AAC audio (LinkedIn requirement)
         "-pix_fmt", "yuv420p",                # broad player compatibility
         "-movflags", "+faststart",            # web-friendly: metadata at front
+        "-shortest",                          # end when video stream ends
         OUTPUT_PATH,
     ]
 
-    print(f"Encoding → {OUTPUT_PATH}  ({FPS} fps, {OUTPUT_WIDTH}px wide) …")
+    print(f"Encoding → {OUTPUT_PATH}  ({OUTPUT_FPS} fps, {OUTPUT_WIDTH}px wide) …")
     subprocess.run(cmd, check=True)
     os.unlink(flist_path)
     print(f"Done. Saved {OUTPUT_PATH}")
