@@ -1,0 +1,1 @@
+How has prosperity shifted since 1990? Watch countries reorder by GDP per capita (PPP), colored by region, with Sri Lanka tracked across 36 years. Small nations under 1M people are excluded worldwide.
